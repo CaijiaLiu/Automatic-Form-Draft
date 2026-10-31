@@ -1,0 +1,18 @@
+SYNTHETIC TRAINING RECORD. This entire narrative, including all identifiers,
+clinician details and contact information, is fictional software test data.
+The synthetic patient identifier is SYN-ITP-002.
+
+Jordan Sample (born 14 September 1979, fictional PHN MOCK-PHN-002) is the
+patient whose attached ITP course is being reviewed for a draft application.
+The names use Western given-name followed by family-name order.
+
+The prescribing physician is Dr Morgan Vale, working at a fictional clinic.
+Prescriber address: 100 Demo Lane, Vancouver BC V0V 0V0.
+The CPSBC licence is not a real registration. The explicitly fictitious test
+label below is used only to demonstrate copying a labelled identifier:
+CPSBC licence: MOCK-CPSBC-002.
+Prescriber phone: 604-555-0100. Prescriber fax: 604-555-0101.
+
+No application date is specified. The application date in the draft should
+default to its local creation date, rather than any of the historical visits.
+No requested agent or prescribing regimen has yet been confirmed.

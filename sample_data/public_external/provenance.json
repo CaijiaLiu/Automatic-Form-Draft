@@ -1,0 +1,108 @@
+{
+  "source": "https://huggingface.co/datasets/RootCauseAnalytics/synthetic-australian-medical-documents-sample",
+  "revision": "75d0072abf04f324303069bd2f6753c429fd9a52",
+  "author": "Jack Webb / Root Cause Analytics",
+  "license": "CC-BY-NC-4.0",
+  "purpose": "Non-commercial local evaluation only; all entities synthetic per dataset card",
+  "downloaded": "2026-10-30",
+  "files": [
+    {
+      "path": "pdfs/0001_prescription_DEPRESSION_GAD_Edwards.pdf",
+      "url": "https://huggingface.co/datasets/RootCauseAnalytics/synthetic-australian-medical-documents-sample/resolve/75d0072abf04f324303069bd2f6753c429fd9a52/pdfs/0001_prescription_DEPRESSION_GAD_Edwards.pdf",
+      "sha256": "ed59cbab8195cc23d409ea59377993624b1e4343eef04e9b492641af6ec4d808",
+      "split": "development",
+      "bytes": 3747
+    },
+    {
+      "path": "pdfs/0006_referral_letter_COLON_CA_Powell.pdf",
+      "url": "https://huggingface.co/datasets/RootCauseAnalytics/synthetic-australian-medical-documents-sample/resolve/75d0072abf04f324303069bd2f6753c429fd9a52/pdfs/0006_referral_letter_COLON_CA_Powell.pdf",
+      "sha256": "7c2e178c0b08d2b161afd744e94b1d648b2bd4b3b0587161b0498e547cee2f90",
+      "split": "development",
+      "bytes": 5776
+    },
+    {
+      "path": "pdfs/0010_progress_note_COVID_PNEUMONIA_Green.pdf",
+      "url": "https://huggingface.co/datasets/RootCauseAnalytics/synthetic-australian-medical-documents-sample/resolve/75d0072abf04f324303069bd2f6753c429fd9a52/pdfs/0010_progress_note_COVID_PNEUMONIA_Green.pdf",
+      "sha256": "17fb5056d5d84f7a8d2997e61844b88dea0d3994f001de16fef18e48021e7bfc",
+      "split": "development",
+      "bytes": 3734
+    },
+    {
+      "path": "pdfs/0023_referral_letter_SEVERE_DEPRESSION_Edwards.pdf",
+      "url": "https://huggingface.co/datasets/RootCauseAnalytics/synthetic-australian-medical-documents-sample/resolve/75d0072abf04f324303069bd2f6753c429fd9a52/pdfs/0023_referral_letter_SEVERE_DEPRESSION_Edwards.pdf",
+      "sha256": "0a6b010f6db95bb7bff2bf2185c4ca1ce36521fee04a739a9445fb7784197954",
+      "split": "held_out",
+      "bytes": 5866
+    },
+    {
+      "path": "pdfs/0033_discharge_summary_CAP_PNEUMONIA_Khan.pdf",
+      "url": "https://huggingface.co/datasets/RootCauseAnalytics/synthetic-australian-medical-documents-sample/resolve/75d0072abf04f324303069bd2f6753c429fd9a52/pdfs/0033_discharge_summary_CAP_PNEUMONIA_Khan.pdf",
+      "sha256": "e4440e57f61ff764f039a84f53710910fd9acbe2b6af73e71f9ad55991ea642b",
+      "split": "held_out",
+      "bytes": 7077
+    },
+    {
+      "path": "pdfs/0045_mental_health_assessment_DEPRESSION_GAD_McKenzie.pdf",
+      "url": "https://huggingface.co/datasets/RootCauseAnalytics/synthetic-australian-medical-documents-sample/resolve/75d0072abf04f324303069bd2f6753c429fd9a52/pdfs/0045_mental_health_assessment_DEPRESSION_GAD_McKenzie.pdf",
+      "sha256": "804e0fb1227ded732dd72741854d1c5ea908fe1ae50e46e8b6a87ae32dd6321e",
+      "split": "held_out",
+      "bytes": 6384
+    },
+    {
+      "path": "pdfs_scanned/0001_prescription_DEPRESSION_GAD_Edwards_scanned.pdf",
+      "url": "https://huggingface.co/datasets/RootCauseAnalytics/synthetic-australian-medical-documents-sample/resolve/75d0072abf04f324303069bd2f6753c429fd9a52/pdfs_scanned/0001_prescription_DEPRESSION_GAD_Edwards_scanned.pdf",
+      "sha256": "4ff5df82eebf07d4bf5cc21a293f910ed1c28147c79e8bc8270f9c11b10472fd",
+      "split": "development",
+      "bytes": 435609
+    },
+    {
+      "path": "pdfs_scanned/0006_referral_letter_COLON_CA_Powell.pdf",
+      "url": "https://huggingface.co/datasets/RootCauseAnalytics/synthetic-australian-medical-documents-sample/resolve/75d0072abf04f324303069bd2f6753c429fd9a52/pdfs_scanned/0006_referral_letter_COLON_CA_Powell.pdf",
+      "sha256": "7c2e178c0b08d2b161afd744e94b1d648b2bd4b3b0587161b0498e547cee2f90",
+      "split": "development",
+      "bytes": 5776
+    },
+    {
+      "path": "pdfs_scanned/0010_progress_note_COVID_PNEUMONIA_Green.pdf",
+      "url": "https://huggingface.co/datasets/RootCauseAnalytics/synthetic-australian-medical-documents-sample/resolve/75d0072abf04f324303069bd2f6753c429fd9a52/pdfs_scanned/0010_progress_note_COVID_PNEUMONIA_Green.pdf",
+      "sha256": "17fb5056d5d84f7a8d2997e61844b88dea0d3994f001de16fef18e48021e7bfc",
+      "split": "development",
+      "bytes": 3734
+    },
+    {
+      "path": "pdfs_scanned/0023_referral_letter_SEVERE_DEPRESSION_Edwards_scanned.pdf",
+      "url": "https://huggingface.co/datasets/RootCauseAnalytics/synthetic-australian-medical-documents-sample/resolve/75d0072abf04f324303069bd2f6753c429fd9a52/pdfs_scanned/0023_referral_letter_SEVERE_DEPRESSION_Edwards_scanned.pdf",
+      "sha256": "5ed5904134e8d49029bdb90d211dfb4763dae95357aa3d21e554ce55556f3481",
+      "split": "held_out",
+      "bytes": 972458
+    },
+    {
+      "path": "pdfs_scanned/0033_discharge_summary_CAP_PNEUMONIA_Khan.pdf",
+      "url": "https://huggingface.co/datasets/RootCauseAnalytics/synthetic-australian-medical-documents-sample/resolve/75d0072abf04f324303069bd2f6753c429fd9a52/pdfs_scanned/0033_discharge_summary_CAP_PNEUMONIA_Khan.pdf",
+      "sha256": "e4440e57f61ff764f039a84f53710910fd9acbe2b6af73e71f9ad55991ea642b",
+      "split": "held_out",
+      "bytes": 7077
+    },
+    {
+      "path": "pdfs_scanned/0045_mental_health_assessment_DEPRESSION_GAD_McKenzie_scanned.pdf",
+      "url": "https://huggingface.co/datasets/RootCauseAnalytics/synthetic-australian-medical-documents-sample/resolve/75d0072abf04f324303069bd2f6753c429fd9a52/pdfs_scanned/0045_mental_health_assessment_DEPRESSION_GAD_McKenzie_scanned.pdf",
+      "sha256": "90ee22251b6a32f84475c3f5ea36e9234e15baefaf4ebc0d168d5136597a732c",
+      "split": "held_out",
+      "bytes": 832986
+    },
+    {
+      "path": "README.md",
+      "url": "https://huggingface.co/datasets/RootCauseAnalytics/synthetic-australian-medical-documents-sample/resolve/75d0072abf04f324303069bd2f6753c429fd9a52/README.md",
+      "sha256": "6fb428ffa632213e6a6e9f829b80ef45ae26c5826dba471703d08cbf57396c72",
+      "split": "reference",
+      "bytes": 10448
+    },
+    {
+      "path": "ground_truth.jsonl",
+      "url": "https://huggingface.co/datasets/RootCauseAnalytics/synthetic-australian-medical-documents-sample/resolve/75d0072abf04f324303069bd2f6753c429fd9a52/ground_truth.jsonl",
+      "sha256": "98675695bd366b7f21ecc5c956130f0b9bc927f29add1b9ce3060b9c371af5dc",
+      "split": "reference",
+      "bytes": 106684
+    }
+  ]
+}

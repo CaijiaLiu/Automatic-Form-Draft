@@ -1,0 +1,17 @@
+.venv/
+__pycache__/
+.pytest_cache/
+*.pyc
+.DS_Store
+.env
+.env.*
+*.pem
+*.key
+.streamlit/secrets.toml
+work/*
+!work/*.py
+outputs/
+assets/*.pdf
+sample_data/public_layouts/*.pdf
+sample_data/public_external/pdfs/
+sample_data/public_external/pdfs_scanned/

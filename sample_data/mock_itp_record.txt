@@ -1,0 +1,10 @@
+SYNTHETIC TRAINING RECORD — not a real patient
+2026-01-12 Diagnosis: Immune thrombocytopenia (ITP)
+2026-01-12 Platelet count: 18 x 10^9/L
+2026-01-13 Medication: Prednisone
+2026-01-13 Dose: 1 mg/kg daily
+2026-02-10 Treatment response: transient rise then relapse
+2026-02-10 Platelet count: 24 x 10^9/L
+2026-02-11 Medication: IVIG
+2026-02-11 Dose: 1 g/kg for 2 days
+2026-03-03 Treatment response: inadequate sustained response
