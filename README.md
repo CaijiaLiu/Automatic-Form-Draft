@@ -1,6 +1,6 @@
 # AI-Assisted ITP Drug Access Application Tool — local MVP
 
-This is a **synthetic-data-only demonstration**, not a clinical device, medical advice, a real application form, or a submission integration. It performs no network requests and does not call external AI services.
+This is a **synthetic-data-only demonstration**, not a clinical device, medical advice, a real application form, or a submission integration. Record processing stays local. Optional AI uses a loopback-only model service; setup downloads public reference files/model weights separately. No hosted AI service receives records.
 
 ## Fresh clone setup
 
@@ -17,8 +17,21 @@ python3 scripts/fetch_reference_files.py
 
 This setup step accesses public document URLs only; it does not upload any records.
 See `THIRD_PARTY_NOTICES.md`. After setup, the local app works without external AI.
-Try `outputs/new_emr_sample_03/records` for a six-file fictional patient packet;
-review answers are in its separate `review` folder. Sample 03 shares the clinical
+The default **Demo / simple Section 1 + clinical packet (6 files)** uses Clara Morales
+(first name Clara, last name Morales). Its upload files are in
+`outputs/new_emr_sample_04_simple_section1/UPLOAD_ONLY`. The separate
+`sample_data/clara_morales_upload_only.zip` contains those six files only.
+
+Four additional fictional patients with different treatment histories and platelet
+trajectories are under `outputs/ITP_Sample_Library` after setup. Upload one patient
+folder at a time. Internal review/answer folders remain local and are excluded
+from the published sample archive. `sample_data/itp_sample_library_upload_only.zip` contains the four upload
+folders without answers. All new fixtures have simple first/last-name fields and
+labelled prescriber contact panels. Identity/contact prefill was checked; these
+authored fixtures are not independent clinical accuracy benchmarks.
+
+The older `outputs/new_emr_sample_03/records` packet is also retained;
+review answers remain local and are excluded from this repository archive. Sample 03 shares the clinical
 course/layout with sample 02 and is not an independent clinical validation case.
 Model weights, caches, generated exports and historical audit screenshots are
 excluded. Some historical artifact paths below refer to local development outputs
@@ -39,12 +52,26 @@ zsh run_demo.sh
 ```bash
 python3 -m venv .venv
 .venv/bin/python -m pip install -r requirements.txt
-.venv/bin/python -m streamlit run app.py --server.address=127.0.0.1
+.venv/bin/python -m streamlit run app.py --server.headless=true --server.address=127.0.0.1 --server.port=8503 --browser.gatherUsageStats=false
 ```
 
-Streamlit will print a local address such as `http://localhost:8501`; open that address in your browser. Keep that Terminal window running while using the demo. If `python3` is not found, install a current Python 3 release first.
+Streamlit will print a local address such as `http://127.0.0.1:8503`; open that address in your browser. Keep that Terminal window running while using the demo. If `python3` is not found, install a current Python 3 release first.
 
 Upload `sample_data/mock_itp_record.txt` first. You can also upload multiple PDF, DOCX, CSV, TXT, PNG, or JPG mock files for the same fictional patient. Files are processed only in the local app process.
+
+## Background startup (this Mac)
+
+After first-time dependency/reference setup, run:
+
+```bash
+.venv/bin/python scripts/start_background_demo.py
+```
+
+This starts the web app detached from Terminal at `http://127.0.0.1:8503` and,
+when local model weights are already installed, starts the optional local model.
+Logs and process IDs are under `work/runtime/`. Closing Terminal does not stop
+these detached services. A computer restart does stop them; this is not a login
+service or a public hosting setup. Optional model startup requires llama.cpp.
 
 ## What it does
 
@@ -368,3 +395,44 @@ pytest -q
 - It flags some conflicting identity fields but does not fully resolve patient identity, deduplicate facts, detect all clinical conflicts, recommend a medicine, calculate eligibility, authenticate users, encrypt data, audit access, or validate a clinician's judgment.
 - `Requires Review` is not a safety guarantee. Clinical personnel must verify every extracted fact and author all clinical rationale.
 - Do not upload real patient information. No EMR/FHIR, PharmaCare, or production deployment is included.
+
+## Section 3 local AI draft (demo update)
+
+The application now provides **Generate & auto-fill Section 3 with local AI**.
+Start the optional local model using `zsh run_local_ai.sh`; default text/table
+prefill still works when the model is unavailable. A focused native-text retrieval
+step chooses a small, explicitly limited subset of relevant clinical excerpts.
+The local model selects excerpt IDs for diagnosis, actual prior treatment,
+response, explicitly documented contraindications and review issues. Software
+copies the original wording into an editable Supporting Details draft, rather than
+accepting new model-written clinical claims. This is extractive organization, not
+clinical reasoning or a verified medical summary. Scan-only pages remain deferred.
+
+Generation runs in the same single background worker as identity/OCR review.
+Untouched Supporting Details autofills when a result completes; manual edits are
+preserved and replacement requires a separate button. Existing patient and
+prescriber fields are not modified. Request medicine and regimen remain manual.
+Source filename, page/block/table position and original excerpts are shown beside
+the suggestion and included in the separate Internal Evidence Report when applied.
+
+Only whole excerpts that fit the official form are inserted. Omitted excerpts
+remain visible with a warning and in the report; no clinical sentence is silently
+shortened. Uncertainty excerpts stay in the review panel rather than becoming an
+asserted application statement. The model can still choose or classify the wrong
+passage, omit important facts or miss a conflict; source presence is not proof of
+clinical correctness. A missing contraindication selection does not mean none
+exist. Every draft needs human review. The inference request has a 150-second
+limit; native-source preparation is separate. CPU speed varies significantly.
+
+Tests include invalid-citation rejection, preserving negation and cancelled-order
+wording, PDF export, single-worker behavior and simulated UI edit preservation.
+A simulated UI test is not evidence of local-model clinical accuracy.
+
+
+## Latest verification
+
+The current update passed 68 automated tests, including recovery from an older
+imported background-worker module after a Streamlit code update. Real local AI
+completion on the development sample and its exported PDF field text were checked.
+The successful CPU run took 137.52 seconds; earlier attempts timed out. This is
+feasibility evidence, not a speed target or a clinical accuracy result.

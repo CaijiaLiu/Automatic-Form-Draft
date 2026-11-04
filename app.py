@@ -19,7 +19,7 @@ st.title('ITP Drug Access — Automatic Form Draft')
 st.warning('Synthetic or public sample records only. Drafts require review and are not for clinical use or submission.')
 st.caption('Upload records for one patient → Extract text and tables locally → Prefill HLTH 5328 → Review, edit and export.')
 parser_revision=hashlib.sha256(b''.join((ROOT/'src'/name).read_bytes() for name in
-    ['extractor.py','demographics.py','prescriber.py','document_text.py','fast_fields.py','semantic.py','models.py','layout_tables.py','official_form.py','autofill.py'])).hexdigest()
+    ['extractor.py','demographics.py','prescriber.py','document_text.py','fast_fields.py','semantic.py','models.py','layout_tables.py','official_form.py','autofill.py','clinical_draft.py','review_jobs.py'])).hexdigest()
 
 @st.cache_data(ttl=300,show_spinner='Reading documents and tables locally…')
 def read_source(filename: str,content: bytes,revision: str):
@@ -32,7 +32,16 @@ def read_source(filename: str,content: bytes,revision: str):
 def ai_status():return local_status()
 
 @st.cache_resource
-def review_jobs():return ReviewJobs()
+def build_review_jobs(revision):
+    # A Streamlit rerun can retain an older imported module as well as a cached
+    # resource. Pass the revision explicitly and recover the old module once.
+    import importlib
+    module=importlib.import_module('src.review_jobs')
+    if not hasattr(module.ReviewJobs,'start_clinical'):
+        module=importlib.reload(module)
+    return module.ReviewJobs()
+
+def review_jobs():return build_review_jobs(parser_revision)
 
 @st.fragment(run_every='1s')
 def review_progress(job_key):
@@ -43,6 +52,65 @@ def review_progress(job_key):
 def mark_edited(key,field):
     touched=set(st.session_state.get(key+'_edited',[]));touched.add(field)
     st.session_state[key+'_edited']=list(touched)
+
+def render_clinical_panel(result,key,case_key,sources,rows):
+    from src.clinical_draft import VERSION
+    if result.identity_conflict:return
+    st.subheader('AI-assisted Section 3 · Clinical Supporting Details')
+    st.caption('Generate an editable English draft from source excerpts: diagnosis, prior treatment and response. Local AI selects original wording; it does not recommend treatment. Scanned pages are deferred.')
+    state='clinical_'+case_key
+    pending=st.session_state.get(state+'_pending')
+    if pending:
+        job=review_jobs().get(pending)
+        if job and job['future'].done():
+            try:
+                draft=job['future'].result()
+                st.session_state[state+'_result']=draft
+                field_key=f'{key}_Supporting Details'
+                current=st.session_state.get(field_key,result.values.get('Supporting Details',''))
+                unchanged=current==st.session_state.get(state+'_snapshot',current)
+                untouched='Supporting Details' not in st.session_state.get(key+'_edited',[])
+                if draft.text and unchanged and untouched:
+                    st.session_state[field_key]=draft.text
+                    st.session_state[state+'_applied']=draft
+                elif draft.text:
+                    st.session_state[state+'_preserved']=True
+            except Exception as exc:st.error('Section 3 review failed: '+type(exc).__name__)
+            st.session_state.pop(state+'_pending',None);pending=None
+    status=ai_status()
+    if not status.get('ready'):st.info(status['detail'])
+    if st.button('Generate & auto-fill Section 3 with local AI',disabled=not status.get('ready') or bool(pending),key=state+'_generate'):
+        job_key=hashlib.sha256((case_key+parser_revision+VERSION+status['model']).encode()).hexdigest()
+        try:
+            review_jobs().start_clinical(job_key,sources,rows,status['model'])
+            st.session_state[state+'_snapshot']=st.session_state.get(f'{key}_Supporting Details',result.values.get('Supporting Details',''))
+            st.session_state[state+'_pending']=job_key;pending=job_key
+            st.session_state.pop(state+'_preserved',None)
+        except RuntimeError as exc:st.info(str(exc))
+    if pending:review_progress(pending)
+    draft=st.session_state.get(state+'_result')
+    if draft:
+        if st.session_state.get(state+'_preserved'):
+            st.info('Your Section 3 edits were preserved. Review the suggestion below before replacing your text.')
+        if draft.text:
+            st.caption(f"Local AI draft ready · {draft.usage.get('wall_seconds','—')} seconds. Review the source links below and edit Supporting Details in the form.")
+            with st.expander('Review AI draft and original evidence',expanded=bool(st.session_state.get(state+'_preserved'))):
+                st.text(draft.text)
+                for item in draft.items:
+                    st.markdown('**'+item['category'].replace('_',' ').title()+'** · '+item['filename']+' · '+item['location'])
+                    st.text(item['text'])
+                for note in draft.notes:st.caption(note)
+            if st.button('Replace Supporting Details with this AI draft',key=state+'_apply'):
+                st.session_state[f'{key}_Supporting Details']=draft.text
+                st.session_state[state+'_applied']=draft
+                st.session_state.pop(state+'_preserved',None)
+        else:
+            st.warning('No AI draft was applied. The existing form is unchanged.')
+            for note in draft.notes:st.caption(note)
+    applied=st.session_state.get(state+'_applied')
+    if applied:
+        result.facts.extend(applied.facts)
+        st.caption('Section 3 AI source excerpts are included in the separate Internal Evidence Report. Selected passages may be incomplete or misclassified; clinical review is required.')
 
 def render_form(result,key):
     st.subheader('Automatically Prefilled · BC HLTH 5328')
@@ -179,11 +247,14 @@ if use_sample and not uploads:
     new_challenge_dir=ROOT/'outputs/new_emr_sample_02/records'
     new_challenge_label='Challenge / new patient (6 files)'
     if new_challenge_dir.exists():options.append(new_challenge_label)
+    simple_dir=ROOT/'outputs/new_emr_sample_04_simple_section1/UPLOAD_ONLY'
+    simple_label='Demo / simple Section 1 + clinical packet (6 files)'
+    if simple_dir.exists():options.insert(0,simple_label)
     public_dir=ROOT/'sample_data'/'public_external'/'pdfs'
     options += [p.name for p in sorted(public_dir.glob('*.pdf'))]
     selected=st.selectbox('Demo source',options)
-    if selected in {challenge_label,new_challenge_label}:
-        directory=challenge_dir if selected==challenge_label else new_challenge_dir
+    if selected in {challenge_label,new_challenge_label,simple_label}:
+        directory={challenge_label:challenge_dir,new_challenge_label:new_challenge_dir,simple_label:simple_dir}[selected]
         sources=[(path.name,path.read_bytes()) for path in sorted(directory.iterdir())
                  if path.suffix.lower() in {'.pdf','.csv'}]
         st.caption('Synthetic development challenge with multiple layouts and clinician roles. Fast prefill handles supported fields; unrecognized details and clinical interpretation still require review.')
@@ -313,6 +384,7 @@ if sources:
                 for warning in semantic.warnings:st.caption(warning)
     elif not result.identity_conflict:
         st.success('No AI calls are needed for the current identity/clinician entries. Review the draft and enter the requested treatment manually.')
+    render_clinical_panel(result,key,case_key,sources,rows)
     facts=result.facts
     documents={name:content for name,content in sources if Path(name).suffix.lower()=='.pdf'}
     st.caption(f'Processed {len(sources)} files · {len(rows)} table row candidates · {len(facts)} evidence items.')

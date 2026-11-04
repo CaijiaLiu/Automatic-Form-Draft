@@ -48,3 +48,28 @@ class ReviewJobs:
 
     def get(self,key):
         with self.lock:return self.jobs.get(key)
+
+    def start_clinical(self,key,sources,rows,model):
+        """Share the single worker with identity/OCR review; never queue models."""
+        with self.lock:
+            existing=self.jobs.get(key)
+            if existing and (not existing['future'].done() or
+                (not existing['future'].exception() and existing['future'].result().text)):
+                return existing
+            if any(not job['future'].done() for job in self.jobs.values()):
+                raise RuntimeError('A local review is already running. Try again when it finishes.')
+            while len(self.jobs)>=8:self.jobs.pop(next(iter(self.jobs)))
+            job={'message':'Preparing Section 3 in the background.','started':time.monotonic()}
+            job['future']=self.pool.submit(self._run_clinical,job,sources,rows,model)
+            self.jobs[key]=job
+            return job
+
+    def _run_clinical(self,job,sources,rows,model):
+        from .clinical_draft import generate_clinical_draft
+        def progress(message):
+            with self.lock:job['message']=message
+        with tempfile.TemporaryDirectory() as tmp:
+            paths=[]
+            for filename,content in sources:
+                path=Path(tmp)/Path(filename).name;path.write_bytes(content);paths.append(path)
+            return generate_clinical_draft(paths,rows,model,progress=progress)
